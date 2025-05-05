@@ -1,356 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Happy Family Dental - Zhengzheng Sun DDS</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating Smiles Dentistry</title>
+    <style>
+        :root {
+            --primary-color: rgb(126, 59, 53);
+            --secondary-color: #f8f9fa;
+            --text-color: #000000;  /* Black for main text */
+        }
 
-    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
 
-    <link rel="stylesheet" href="fonts/icomoon/style.css">
+        body {
+            line-height: 1.6;
+            color: #000000;
+        }
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/jquery-ui.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-    <link rel="stylesheet" href="css/bootstrap-datepicker.css">
+        header {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
 
-    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    <link rel="stylesheet" href="css/aos.css">
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
 
-    <link rel="stylesheet" href="css/style.css">
-    
-  </head>
-  <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
-  
-  <div class="site-wrap"  id="home-section">
+        .logo span {
+            color: rgb(126, 59, 53);
+        }
 
-    <div class="site-mobile-menu site-navbar-target">
-      <div class="site-mobile-menu-header">
-        <div class="site-mobile-menu-close mt-3">
-          <span class="icon-close2 js-menu-toggle"></span>
-        </div>
-      </div>
-      <div class="site-mobile-menu-body"></div>
-    </div>
-   
-      
-    <header class="site-navbar js-sticky-header site-navbar-target" role="banner">
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
 
-      <div class="container">
-        <div class="row align-items-center position-relative">
-          
+        .nav-links a {
+            text-decoration: none;
+            color: rgb(126, 59, 53);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: rgb(126, 59, 53);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hero {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&q=80&w=1080');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        section {
+            padding: 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .services {
+            background-color: var(--secondary-color);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
             
-            <div class="site-logo">
-              <a href="index.html" class="text-black"><span class="text-primary">HAPPY FAMILY </span>DENTAL</a>
-            </div>
+            .logo img {
+                height: 50px;  /* Further reduce logo size on mobile */
+                margin-bottom: 10px;
+            }
             
-            <div class="col-12">
-              <nav class="site-navigation text-center " role="navigation">
-                <ul class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block">
-                <li><a href="#home-section" class="nav-link">Home</a></li>
-                <li><a href="#services-section" class="nav-link">Services</a></li>
-                <li><a href="#team-section" class="nav-link">Doctor</a></li>
-                <li><a href="#testimonials-section" class="nav-link">Testimonials</a></li>
-                <li><a href="#contact-section" class="nav-link">Contact</a></li>
-              </ul>
-              </nav>
-          
+            .logo span {
+                font-size: 1.4rem;  /* Smaller text on mobile */
+            }
+
+            .hamburger {
+                display: block;
+                z-index: 1001;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background-color: white;
+                padding: 80px 40px;
+                transition: right 0.3s ease;
+                box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 2rem 1rem;
+            }
+
+            .contact-info p {
+                font-size: 0.9rem;
+            }
+
+            #about > div {
+                flex-direction: column;
+            }
+            
+            #about img {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+        }
+
+        #about {
+            margin-top: 3rem; /* Adds extra space above the About section */
+            padding-bottom: 1rem; /* Less space below About */
+        }
+
+        #contact {
+            padding-top: 1rem; /* Less space above Contact */
+        }
+
+        #about p {
+            margin-bottom: 1.2em; /* Adjust the value as needed for more or less space */
+        }
+
+        #about h3 {
+            margin-bottom: 1.2em; /* Adds space below the heading */
+        }
+
+        #about h3 + p {
+            margin-top: 0;         /* Remove any default top margin */
+            margin-bottom: 1.2em;  /* Ensures space below the first paragraph after the heading */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.jpg" alt="Creating Smiles Dentistry Logo" style="height: 75px; width: auto;">
+                <span style="font-size: 1.8rem; margin-left: 15px; color: rgb(126, 59, 53);">Creating Smiles Dentistry</span>
             </div>
-
-          <div class="toggle-button d-inline-block d-lg-none"><a href="#" class="site-menu-toggle py-5 js-menu-toggle text-black"><span class="icon-menu h3"></span></a></div>
-
-        </div>
-      </div>
-      
+        </nav>
     </header>
-    
-<!--
-    <div class="site-section-cover img-bg-section" style="background-image: url('images/person-transparent-2.png'); " data-aos="fade">
-      
-      <div class="container">
-        <div class="row align-items-center">
-			  <div class="col-12 text-center mb-5">
-				  <div class="block-heading-1">
-					<span>Welcome To Happy Family Dental</span>
-					<h2 class="mb-4" data-aos="fade-up" data-aos-delay="100">Hours & Location</h2>
-				  </div>
-			  </div>
 
-				  <ul class="list-unstyled">
-					  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Thursday 8-5</b></li>
-					  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Friday 8-5</b></li>
-					  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Saturday 8-5</b></li>
-					  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Other Times By Appointment Only</b></li>
-					  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>221 S. 1st Ave., Arcadia, CA 91006</b></li>
-					  <li>
-						<figure>
-						<img src="images/location.PNG" alt="Image">
-						</figure>
-					  </li>
-				  </ul>	
-        </div>
-      </div>
-    </div>
--->  
-	<!--<div class="site-section bg-light" id="home-section" data-aos="fade">-->
-	<div class="site-section bg-light" id="home-section">
-      <div class="container">
-        <div class="row text-center">
-          <div class="col-12 text-center mb-5">
-            <div class="block-heading-1">
-              <span>Welcome To Happy Family Dental</span>
-              <h2>Hours & Location</h2>
-            </div>
-          </div>
-        </div>
-        <div class="row text-center">
-          <div class="col-lg-6 mb-5 text-center">
-			<ul class="list-unstyled">
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Tuesday 9-6</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Thursday 9-6</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Friday 9-6</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Other Times By Appointment Only</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>221 S. 1st Ave., Arcadia, CA 91006</b></li>
-			  <li>
-				<img src="images/location.PNG" alt="Image">
-			  </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-	<div class="site-section bg-light" id="contact-section" data-aos="fade">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 text-center mb-5">
-            <div class="block-heading-1">
-              <span>Get In Touch</span>
-              <h2>Contact Us</h2>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-6 mb-5 text-center">
-			<ul class="list-unstyled">
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Phone: (626) 446-8264</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Text: (626) 560-3676</b></li>
-			  <li class="mb-4" data-aos="fade-up" data-aos-delay="200"><b>Email: john@HappyFamilyDental.net</b></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section block-feature-1-wrap" id="services-section">
-      <div class="container">
-        <div class="row mb-5">
-          <div class="col-12 text-center mb-5">
-            <div class="block-heading-1">
-              <span>How Can We Help</span>
-              <h2>Dental Services</h2>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-dentist"></span>
-              </span>
-              <h2 class="text-black">Dentures</h2>
-              <p>A removable partial denture can easily be taken out of the mouth for cleaning. Partial dentures usually have replacement teeth fixed to a plastic base that matches the color of your gums. The plastic base may cover a metal framework. Partial dentures often have some form of clasp that attaches to your natural teeth. (American Dental Association)</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up" data-aos-delay="100">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-dental-care"></span>
-              </span>
-              <h2 class="text-black">White Fillings</h2>
-              <p>Composite fillings are a mixture of acrylic resin and finely ground glasslike particles that produce a tooth-colored restoration. Composite fillings provide durability and resistance to fracture in small-to-mid-sized restoration to need to withstand moderate chewing pressure. (American Dental Association)</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up" data-aos-delay="200">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-dental-1"></span>
-              </span>
-              <h2 class="text-black">Crowns & Bridges</h2>
-              <p>A crown is a cover or "cap" your dentist can put on a tooth. The crown restores the tooth to its normal shape, size and function. The purpose of a crown is to make the tooth stronger or improve the way it looks. (American Dental Association)</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-baby"></span>
-              </span>
-              <h2 class="text-black">Dentistry For Kids</h2>
-              <p>We provide both primary and comprehensive preventive and therapeutic oral health care for infants and children through adolescence, including those with special health care needs. (American Dental Association)</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up" data-aos-delay="100">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-tooth"></span>
-              </span>
-              <h2 class="text-black">Exams & Cleanings</h2>
-              <p>Individual risk factors help to dictate the frequency of cleanings needed per year to help prevent periodontal disease. High-risk patients would likely benefit from more frequent dental visits, while low-risk patients may see the same benefits from only one cleaning per year. Personalized oral care is a necessity for good dental health. (American Dental Association)</p>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-5" data-aos="fade-up" data-aos-delay="200">
-            <div class="block-feature-1">
-              <span class="icon">
-                <span class="flaticon-dental"></span>
-              </span>
-              <h2 class="text-black">Implants</h2>
-              <p>Dental implants are made of titanium (a strong, lightweight metal) and other materials that are well accepted by the body. Implants offer firm support to man-made teeth. They feel more natural than typical bridges or dentures and help keep the jawbone from shrinking. (American Dental Association)</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section" id="team-section">
-      <div class="container">
-        <div class="row mb-5">
-          <div class="col-12 text-center mb-5">
-            <div class="block-heading-1">
-              <span>About Us</span>
-              <h2>Meet The Team</h2>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-md-6 mb-4 mb-lg-0" data-aos="fade-up">
-            <div class="block-team-member-1 text-center rounded">
-              <figure>
-                <img src="images/sun.jpg" alt="Image" class="img-fluid rounded-circle">
-              </figure>
-              <h3 class="font-size-20 text-black">Zhengzheng "John" Sun</h3>
-              <span class="d-block font-gray-5 letter-spacing-1 text-uppercase font-size-12 mb-3">Dentist</span>
-              <p class="px-3 mb-3">Dr. Zhengzheng “John” Sun graduated from UCLA School of Dentistry with honors and has completed a general practice residency at UCLA, he is currently on their faculty as a part time dentist treating special needs patients. Dr. Sun maintains hospital privileges at the Ronald Regan UCLA Medical Center in order to see patients who cannot be seen in a conventional dental office. Dr. Sun has been a resident of Arcadia and attended Arcadia High School then went on to complete his B.S. degree in Computer Science at UC Irvine. He then earned his Master’s degree at USC Viterbi School of Engineering.</p>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="site-section bg-light block-13" id="testimonials-section" data-aos="fade">
-      <div class="container">
-        
-        <div class="text-center mb-5">
-          <div class="block-heading-1">
-            <span>What People Say</span>
-            <h2>Testimonials</h2>
-          </div>
-        </div>
-
-        <div class="owl-carousel nonloop-block-13">
-          <div>
-                <img src="images/t1.jpg" alt="Image">
-          </div>
-          <div>
-                <img src="images/t2.jpg" alt="Image">
-          </div>
-		  <div>
-                <img src="images/t3.jpg" alt="Image">
-          </div>
-		  <div>
-                <img src="images/t4.jpg" alt="Image">
-          </div>          
-		  <div>
-                <img src="images/t5.jpg" alt="Image">
-          </div>
-		  <div>
-                <img src="images/t6.jpg" alt="Image">
-          </div>
-		  <div>
-                <img src="images/t7.jpg" alt="Image">
-          </div>
-		  <div>
-                <img src="images/t8.JPG" alt="Image">
-          </div>		  
-<!--
-          <div>
-            <div class="block-testimony-1 text-center">
-              <blockquote class="mb-4">
-                <p>&ldquo;Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, fugit excepturi sapiente voluptatum nulla odio quaerat quibusdam tempore similique doloremque veritatis et cupiditate, maiores cumque repudiandae explicabo tempora deserunt consequuntur?&rdquo;</p>
-              </blockquote>
-
-              <figure>
-                <img src="images/person_3.jpg" alt="Image" class="img-fluid rounded-circle mx-auto">
-              </figure>
-              <h3 class="font-size-20 text-black">Robert Steward</h3>
-            </div>
-          </div>
--->
-
-        </div>
-
-      </div>
-    </div>
-
-    <footer class="site-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="row">
-              <div class="col-md-5">
-                <h2 class="footer-heading mb-4">About Us</h2>
-                <p>Our goal is to build a long-term relationship between our staff and patients and provide high quality, consumer friendly dental services for the entire family.</p>
-              </div>
-              <div class="col-md-3 ml-auto">
-                <h2 class="footer-heading mb-4">Features</h2>
-                <ul class="list-unstyled">
-                  <li><a href="#home-section">Hours & Location</a></li>
-                  <li><a href="#services-section">Services</a></li>
-                  <li><a href="#testimonials-section">Testimonials</a></li>
-                  <li><a href="#contact-section">Contact Us</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-		</div>
-        <div class="row pt-5 mt-5 text-center">
-          <div class="col-md-12">
-            <div class="border-top pt-5">
-            <p>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" >Colorlib</a>
-            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            </p>
+    <section id="about">
+        <h2>About Us</h2>
+        <div style="display: flex; align-items: start; gap: 30px; margin: 20px 0;">
+            <img src="pic.webp" alt="Creating Smiles Dentistry Office" style="width: 50%; max-width: 400px; height: auto; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div>
+                <h3>Zhengzheng (John) Sun D.D.S.</h3>
+                <p>Dr. Sun graduated from UCLA School of Dentistry with honors and completed a general practice residency at UCLA. He later served as a part-time faculty member, specializing in treating special needs patients.</p>
+                
+                <p>Currently, Dr. Sun maintains hospital privileges at the City of Hope, enabling him to provide care for patients who cannot be treated in a conventional dental office.</p>
+                
+                <p>A local resident of Los Angeles, Dr. Sun completed his B.S. degree in Computer Science at UC Irvine, followed by a Master's degree at USC Viterbi School of Engineering before pursuing his dental career.</p>
             </div>
         </div>
-      </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <div class="contact-info">
+            <p>📍 677 S. 2nd Ave. Covina, CA 91723</p>
+            <p>📞 626-858-2700</p>
+            <p>✉️ office@creatingsmilesdentistry.com</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Creating Smiles Dentistry. All rights reserved.</p>
     </footer>
 
-  </div>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Close mobile menu when clicking a link
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.nav-links').classList.remove('active');
+                    document.querySelector('.hamburger').classList.remove('active');
+                }
+            });
+        });
 
-  <script src="js/jquery-3.3.1.min.js"></script>
-  <script src="js/jquery-ui.js"></script>
-  <script src="js/popper.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/owl.carousel.min.js"></script>
-  <script src="js/jquery.countdown.min.js"></script>
-  <script src="js/jquery.magnific-popup.min.js"></script>
-  <script src="js/bootstrap-datepicker.min.js"></script>
-  <script src="js/jquery.sticky.js"></script>
-  <script src="js/jquery.waypoints.min.js"></script>
-  <script src="js/jquery.animateNumber.min.js"></script>
-  <script src="js/aos.js"></script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            } else {
+                header.style.backgroundColor = 'white';
+            }
+        });
 
-  <script src="js/main.js"></script>
-    
-  </body>
-</html>
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target) && window.innerWidth <= 768) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html> 
