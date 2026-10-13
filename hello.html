@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello</title>
+    <script src="auth.js"></script>
+    <script>PortalAuth.requireAuth();</script>
 </head>
 <body>
     <h1>Hello, world!</h1>
     <p>This is a test page on creatingsmilesdentistry.com.</p>
+    <p><a href="#" onclick="PortalAuth.logout(); return false;">Log out</a></p>
 </body>
 </html>
