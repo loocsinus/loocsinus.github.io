@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insurance Claim Aging &mdash; Creating Smiles Dentistry</title>
+<script src="auth.js"></script>
+<script>PortalAuth.requireAuth();</script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,Helvetica,sans-serif; }
+  body { background:#f4f5f6; color:#222; font-size:14px; }
+  header { background:rgb(126,59,53); color:#fff; padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.5rem; }
+  header h1 { font-size:1.15rem; font-weight:600; }
+  header .meta { font-size:.8rem; opacity:.9; }
+  header a { color:#fff; font-size:.8rem; }
+  .cards { display:flex; gap:.75rem; padding:1rem 1.25rem 0; flex-wrap:wrap; }
+  .card { background:#fff; border-radius:8px; padding:.7rem 1rem; box-shadow:0 1px 4px rgba(0,0,0,.08); min-width:130px; }
+  .card .lbl { font-size:.72rem; color:#666; text-transform:uppercase; letter-spacing:.04em; }
+  .card .val { font-size:1.2rem; font-weight:700; margin-top:.15rem; }
+  .card.hot .val { color:#b00020; }
+  .toolbar { padding:1rem 1.25rem .5rem; display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; }
+  .toolbar input { padding:.55rem .75rem; border:1px solid #ccc; border-radius:6px; font-size:.9rem; width:320px; max-width:100%; }
+  .toolbar .count { font-size:.85rem; color:#555; }
+  .tblwrap { padding:.5rem 1.25rem 2rem; overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.08); font-size:.82rem; }
+  thead th { background:#ece7e4; color:#4a2c28; text-align:left; padding:.6rem .5rem; white-space:nowrap; cursor:pointer; user-select:none; position:sticky; top:0; }
+  thead th.num, td.num { text-align:right; }
+  tbody td { padding:.45rem .5rem; border-top:1px solid #eee; white-space:nowrap; }
+  tbody tr:nth-child(even) td { background:#faf9f8; }
+  tbody tr:hover td { background:#f3ecea; }
+  td.d90 { color:#b00020; font-weight:700; }
+  .pstar { color:#b26a00; font-weight:700; }
+  footer { padding:0 1.25rem 2rem; font-size:.78rem; color:#777; }
+  @media (max-width:700px){ .toolbar input{ width:100%; } }
+</style>
+</head>
+<body>
+<div id="lock" style="max-width:380px;margin:12vh auto 0;padding:0 1rem;">
+  <div style="background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:1.25rem;">
+    <h2 style="font-size:1.2rem;margin-bottom:.5rem;color:rgb(126,59,53);">Enter passphrase</h2>
+    <p style="font-size:.85rem;color:#555;margin-bottom:1rem;">The aging data is encrypted. Type the office passphrase to unlock it. Nothing is stored on this computer &mdash; closing this tab wipes it from memory.</p>
+    <label for="pp" style="display:block;font-size:.8rem;color:#555;margin-bottom:.25rem;">Passphrase</label>
+    <input id="pp" type="password" autocomplete="off" style="width:100%;padding:.55rem;border:1px solid #ccc;border-radius:4px;font-size:.95rem;">
+    <button id="unlockBtn" style="width:100%;margin-top:.75rem;background:rgb(126,59,53);color:#fff;border:none;border-radius:4px;padding:.65rem;font-size:.95rem;cursor:pointer;">Unlock</button>
+    <div id="lockError" style="color:#b00020;font-size:.85rem;margin-top:.6rem;min-height:1.2em;"></div>
+  </div>
+</div>
+<div id="app" hidden>
+
+<header>
+  <div>
+    <h1>Insurance Claim Aging &mdash; Creating Smiles Dentistry</h1>
+    <div class="meta">Report date: 10/17/2026 &nbsp;&middot;&nbsp; 547 claims &nbsp;&middot;&nbsp; <a href="#" onclick="PortalAuth.logout();return false;">Log out</a></div>
+  </div>
+</header>
+<div class="cards">
+  <div class="card"><div class="lbl">Total outstanding</div><div class="val">$177,232.00</div></div>
+  <div class="card"><div class="lbl">Current</div><div class="val">$90,646.00</div></div>
+  <div class="card"><div class="lbl">31&ndash;60 days</div><div class="val">$44,485.00</div></div>
+  <div class="card"><div class="lbl">61&ndash;90 days</div><div class="val">$20,455.00</div></div>
+  <div class="card hot"><div class="lbl">Over 90 days</div><div class="val">$21,646.00</div></div>
+</div>
+<div class="toolbar">
+  <input id="q" type="search" placeholder="Search patient, insurance, or subscriber&hellip;" autocomplete="off">
+  <span class="count" id="count"></span>
+</div>
+<div class="tblwrap">
+<table id="t">
+  <thead><tr>
+    <th data-k="patient">Patient</th><th data-k="type">P/S</th><th data-k="insurance">Insurance</th>
+    <th data-k="phone">Phone</th><th data-k="subscriber">Subscriber</th>
+    <th data-k="sent">Sent</th><th data-k="service">Service</th>
+    <th data-k="estimate" class="num">Estimate</th><th data-k="current" class="num">Current</th>
+    <th data-k="d31" class="num">31&ndash;60</th><th data-k="d61" class="num">61&ndash;90</th>
+    <th data-k="d90" class="num">&gt;90</th><th data-k="total" class="num">Total</th>
+  </tr></thead>
+  <tbody id="tb"></tbody>
+</table>
+</div>
+<footer>Partially-paid claims are marked with *. Birthdays and member ID numbers are intentionally omitted from this page. Data extracted from the Dentrix aging report dated 10/17/2026.</footer>
+<script>
+var DATA = null;
+var ITER = 600000;
+function b64ToBytes(s){ var b=atob(s),n=b.length,a=new Uint8Array(n); for(var i=0;i<n;i++) a[i]=b.charCodeAt(i); return a; }
+async function deriveKey(pp, salt){
+  var base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pp), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2", salt:salt, iterations:ITER, hash:"SHA-256"},
+    base, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+}
+async function unlock(){
+  var err = document.getElementById("lockError"); err.textContent = "";
+  var pp = document.getElementById("pp").value;
+  if(!pp){ err.textContent = "Type the passphrase first."; return; }
+  try{
+    var res = await fetch("insaging-data.enc.json", {cache:"no-store"});
+    if(!res.ok) throw 0;
+    var env = await res.json();
+    var key = await deriveKey(pp, b64ToBytes(env.salt));
+    var raw = b64ToBytes(env.data);
+    var pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64ToBytes(env.iv)}, key, raw);
+    var data = JSON.parse(new TextDecoder().decode(pt));
+    DATA = data.claims;
+    document.getElementById("pp").value = "";
+    document.getElementById("lock").hidden = true;
+    document.getElementById("app").hidden = false;
+    render();
+  }catch(e){ err.textContent = "Wrong passphrase, or the data file is missing/corrupt."; }
+}
+document.getElementById("unlockBtn").addEventListener("click", unlock);
+document.getElementById("pp").addEventListener("keydown", function(e){ if(e.key==="Enter") unlock(); });
+var sortK = "d90", sortDir = -1;
+var NUMKEYS = {estimate:1,current:1,d31:1,d61:1,d90:1,total:1};
+function fmt(n){ return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function render(){
+  var q = document.getElementById("q").value.trim().toLowerCase();
+  var rows = DATA.filter(function(r){
+    return !q || r.patient.toLowerCase().indexOf(q)>=0 || r.insurance.toLowerCase().indexOf(q)>=0 || r.subscriber.toLowerCase().indexOf(q)>=0;
+  });
+  rows.sort(function(a,b){
+    var x=a[sortK], y=b[sortK];
+    if (NUMKEYS[sortK]) return (x-y)*sortDir;
+    x=String(x).toLowerCase(); y=String(y).toLowerCase();
+    return (x<y?-1:x>y?1:0)*sortDir;
+  });
+  var h = "";
+  for (var i=0;i<rows.length;i++){
+    var r = rows[i];
+    h += "<tr><td>"+esc(r.patient)+(r.partial?' <span class="pstar" title="Partially paid claim">*</span>':"")+"</td>"
+      + "<td>"+r.type+"</td><td>"+esc(r.insurance)+"</td><td>"+esc(r.phone)+"</td>"
+      + "<td>"+esc(r.subscriber)+"</td><td>"+r.sent+"</td><td>"+r.service+"</td>"
+      + '<td class="num">'+fmt(r.estimate)+'</td><td class="num">'+fmt(r.current)+"</td>"
+      + '<td class="num">'+fmt(r.d31)+'</td><td class="num">'+fmt(r.d61)+'</td>'
+      + '<td class="num d90">'+fmt(r.d90)+'</td><td class="num"><b>'+fmt(r.total)+"</b></td></tr>";
+  }
+  document.getElementById("tb").innerHTML = h;
+  document.getElementById("count").textContent = rows.length + " of " + DATA.length + " claims";
+}
+document.querySelectorAll("thead th").forEach(function(th){
+  th.addEventListener("click", function(){
+    var k = th.getAttribute("data-k");
+    if (sortK === k) { sortDir *= -1; } else { sortK = k; sortDir = NUMKEYS[k] ? -1 : 1; }
+    render();
+  });
+});
+document.getElementById("q").addEventListener("input", render);
+</script>
+</div>
+</body>
+</html>
