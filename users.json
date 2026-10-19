@@ -1,1 +1,9 @@
-{"users":[{"password":"x","username":"staff","note":"probe"}]}
+{
+  "users": [
+    {
+      "username": "staff",
+      "salt": "f7c5d072d21fe45fa46fff1b49308e32",
+      "password": "ccc0e295fbd87afcc00fa0ae7be7e0a90cb41aa4c6e6e819467c5e178acfacc5"
+    }
+  ]
+}
