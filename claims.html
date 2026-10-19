@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claims Tracker — Creating Smiles Dentistry</title>
+<script src="auth.js"></script>
+<script>PortalAuth.requireAuth();</script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family: Arial, Helvetica, sans-serif; }
+  body { background:#f4f5f7; color:#222; }
+  header { background: rgb(126,59,53); color:#fff; padding:0.8rem 1rem; display:flex; align-items:center; gap:1rem; position:sticky; top:0; z-index:10; }
+  header h1 { font-size:1.05rem; font-weight:600; flex:1; }
+  header a { color:#fff; font-size:0.85rem; }
+  #dirty { display:none; background:#b7791f; color:#fff; font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:10px; }
+  main { max-width: 860px; margin: 0 auto; padding: 1rem; }
+  .card { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.08); padding:1.25rem; }
+  /* lock screen */
+  #lock { max-width:380px; margin:12vh auto 0; }
+  #lock h2 { font-size:1.2rem; margin-bottom:0.5rem; color: rgb(126,59,53); }
+  #lock p { font-size:0.85rem; color:#555; margin-bottom:1rem; }
+  label { display:block; font-size:0.8rem; color:#555; margin:0.7rem 0 0.25rem; }
+  input, select, textarea { width:100%; padding:0.55rem; border:1px solid #ccc; border-radius:4px; font-size:0.95rem; }
+  textarea { min-height:4rem; resize:vertical; }
+  button { background: rgb(126,59,53); color:#fff; border:none; border-radius:4px; padding:0.65rem 1rem; font-size:0.95rem; cursor:pointer; }
+  button:hover { background: rgb(105,48,43); }
+  button.ghost { background:#e9ecef; color:#333; }
+  button.small { padding:0.35rem 0.6rem; font-size:0.8rem; }
+  button.danger { background:#b00020; }
+  #lockError { color:#b00020; font-size:0.85rem; margin-top:0.6rem; min-height:1.2em; }
+  /* toolbar */
+  #toolbar { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem; align-items:center; }
+  #toolbar input[type=search] { flex:2; min-width:160px; }
+  #toolbar select { flex:1; min-width:120px; width:auto; }
+  #summary { display:flex; flex-wrap:wrap; gap:1.25rem; font-size:0.85rem; color:#444; background:#fff; border-radius:8px; padding:0.7rem 1rem; margin-bottom:0.75rem; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+  #summary b { color:#111; }
+  /* rows */
+  .row { background:#fff; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,0.08); padding:0.7rem 0.9rem; margin-bottom:0.5rem; }
+  .row .line1 { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; }
+  .tag { font-size:0.7rem; font-weight:700; background:#e7eefc; color:#2456a6; border-radius:4px; padding:0.15rem 0.45rem; }
+  .name { font-weight:700; font-size:0.95rem; }
+  .pill { font-size:0.72rem; border-radius:10px; padding:0.15rem 0.55rem; background:#eee; color:#444; }
+  .pill.submitted { background:#e3f2fd; color:#1565c0; }
+  .pill.in_review { background:#fff8e1; color:#8d6e00; }
+  .pill.paid { background:#e8f5e9; color:#2e7d32; }
+  .pill.partially_paid { background:#e8f5e9; color:#2e7d32; }
+  .pill.denied { background:#fce4ec; color:#b00020; }
+  .pill.voided { background:#f0f0f0; color:#888; }
+  .total { margin-left:auto; font-weight:700; font-size:0.95rem; }
+  .row .line2 { font-size:0.8rem; color:#666; margin-top:0.3rem; }
+  .row .actions { display:flex; gap:0.4rem; margin-top:0.5rem; align-items:center; flex-wrap:wrap; }
+  .row .actions select { width:auto; padding:0.3rem; font-size:0.8rem; }
+  .note { font-size:0.78rem; color:#8d6e00; background:#fffbe6; border-radius:4px; padding:0.3rem 0.5rem; margin-top:0.4rem; }
+  /* form modal */
+  #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:20; overflow-y:auto; }
+  #formCard { max-width:640px; margin:3vh auto; }
+  #formCard h2 { font-size:1.1rem; margin-bottom:0.5rem; color: rgb(126,59,53); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:0 0.75rem; }
+  .prow { display:grid; grid-template-columns: 1fr 64px 70px 90px 28px; gap:0.4rem; margin-bottom:0.4rem; align-items:center; }
+  .prow input { padding:0.4rem; font-size:0.85rem; }
+  .formBtns { display:flex; gap:0.5rem; margin-top:1rem; }
+  #saveHelp { font-size:0.8rem; color:#555; background:#fff; border-radius:8px; padding:0.7rem 1rem; margin-top:0.75rem; box-shadow:0 1px 4px rgba(0,0,0,0.08); }
+  #saveHelp ol { margin:0.4rem 0 0 1.2rem; }
+  #empty { text-align:center; color:#888; padding:2rem 0; font-size:0.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Claims Tracker</h1>
+  <span id="dirty">Unsaved changes</span>
+  <a href="#" id="logoutLink">Log out</a>
+</header>
+
+<main>
+  <!-- passphrase gate -->
+  <div id="lock">
+    <div class="card">
+      <h2>Enter passphrase</h2>
+      <p>The claims data file is encrypted. Type the office passphrase to unlock it. Nothing is stored on this computer — closing this tab wipes it from memory.</p>
+      <label for="pp">Passphrase</label>
+      <input id="pp" type="password" autocomplete="off">
+      <div style="margin-top:1rem"><button id="unlockBtn" style="width:100%">Unlock</button></div>
+      <div id="lockError"></div>
+    </div>
+  </div>
+
+  <!-- app -->
+  <div id="app" hidden>
+    <div id="toolbar">
+      <input type="search" id="q" placeholder="Search patient, member ID, code, claim #…">
+      <select id="fStatus">
+        <option value="">All statuses</option>
+        <option value="submitted">Submitted</option>
+        <option value="in_review">In review</option>
+        <option value="paid">Paid</option>
+        <option value="partially_paid">Partially paid</option>
+        <option value="denied">Denied</option>
+        <option value="voided">Voided</option>
+      </select>
+      <button id="newBtn">+ New claim</button>
+      <button id="saveBtn">Save &amp; download data file</button>
+    </div>
+    <div id="summary"></div>
+    <div id="list"></div>
+    <div id="saveHelp">
+      <b>How saving works:</b> this page can't write to the website directly.
+      <ol>
+        <li>Make your edits, then tap <b>Save &amp; download data file</b>.</li>
+        <li>Send the downloaded <b>claims-data.enc.json</b> to Dr. Sun.</li>
+        <li>He uploads it — the new data goes live for everyone.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- edit form -->
+  <div id="overlay">
+    <div class="card" id="formCard">
+      <h2 id="formTitle">New claim</h2>
+      <div class="grid2">
+        <div><label>Patient name</label><input id="f_patientName"></div>
+        <div><label>Member ID</label><input id="f_memberId"></div>
+        <div><label>Date of birth</label><input id="f_patientDob" type="date"></div>
+        <div><label>Date of service</label><input id="f_dateOfService" type="date"></div>
+        <div><label>Date submitted</label><input id="f_dateSubmitted" type="date"></div>
+        <div><label>Claim # (reference)</label><input id="f_referenceNumber"></div>
+        <div><label>Provider</label><input id="f_provider" value="Zhengzheng Sun"></div>
+        <div><label>Status</label><select id="f_status">
+          <option value="submitted">Submitted</option>
+          <option value="in_review">In review</option>
+          <option value="paid">Paid</option>
+          <option value="partially_paid">Partially paid</option>
+          <option value="denied">Denied</option>
+          <option value="voided">Voided</option>
+        </select></div>
+        <div><label>Paid amount ($)</label><input id="f_paidAmount" type="number" min="0" step="0.01" placeholder="0.00"></div>
+        <div><label>Paid date</label><input id="f_paidDate" type="date"></div>
+      </div>
+      <label>Procedures</label>
+      <div id="procRows"></div>
+      <button class="ghost small" id="addProc">+ Add procedure</button>
+      <label>Follow-up date</label><input id="f_followUpDate" type="date">
+      <label>Notes</label><textarea id="f_notes"></textarea>
+      <div class="formBtns">
+        <button id="saveForm">Save claim</button>
+        <button class="ghost" id="cancelForm">Cancel</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var ITER = 600000;
+  var claims = [], passphrase = "", dirty = false, editingId = null;
+  var STATUS_LABEL = { submitted:"Submitted", in_review:"In review", paid:"Paid",
+    partially_paid:"Partially paid", denied:"Denied", voided:"Voided" };
+
+  function $(id) { return document.getElementById(id); }
+  function b64ToBytes(s) { var b = atob(s), n = b.length, a = new Uint8Array(n); for (var i=0;i<n;i++) a[i]=b.charCodeAt(i); return a; }
+  function bytesToB64(a) { var s=""; for (var i=0;i<a.length;i++) s+=String.fromCharCode(a[i]); return btoa(s); }
+  function money(c) { return "$" + (c/100).toFixed(2); }
+  function fmtDate(iso) { if (!iso) return "—"; var p = iso.split("-"); return p[1].replace(/^0/,"") + "/" + p[2].replace(/^0/,"") + "/" + p[0]; }
+  function esc(s) { return String(s==null?"":s).replace(/[&<>"']/g, function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+  async function deriveKey(pp, salt) {
+    var base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pp), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey({ name:"PBKDF2", salt:salt, iterations:ITER, hash:"SHA-256" },
+      base, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]);
+  }
+
+  async function unlock() {
+    var err = $("lockError"); err.textContent = "";
+    var pp = $("pp").value;
+    if (!pp) { err.textContent = "Type the passphrase first."; return; }
+    try {
+      var res = await fetch("claims-data.enc.json", { cache:"no-store" });
+      if (!res.ok) throw new Error("fetch");
+      var env = await res.json();
+      var key = await deriveKey(pp, b64ToBytes(env.salt));
+      var raw = b64ToBytes(env.data);
+      var pt = await crypto.subtle.decrypt({ name:"AES-GCM", iv:b64ToBytes(env.iv) }, key, raw);
+      var data = JSON.parse(new TextDecoder().decode(pt));
+      claims = data.claims || [];
+      passphrase = pp;
+      $("pp").value = "";
+      $("lock").hidden = true;
+      $("app").hidden = false;
+      render();
+    } catch (e) {
+      err.textContent = "Wrong passphrase, or the data file is missing/corrupt.";
+    }
+  }
+
+  function billed(c) { return c.procedures.reduce(function(s,p){return s+p.feeCents;},0); }
+
+  function filtered() {
+    var q = $("q").value.trim().toLowerCase(), st = $("fStatus").value;
+    return claims.filter(function(c){
+      if (st && c.status !== st) return false;
+      if (!q) return true;
+      var hay = (c.patientName+" "+c.memberId+" "+c.referenceNumber+" "+
+        c.procedures.map(function(p){return p.code;}).join(" ")).toLowerCase();
+      return hay.indexOf(q) >= 0;
+    }).sort(function(a,b){ return (b.dateSubmitted||"").localeCompare(a.dateSubmitted||""); });
+  }
+
+  function procLine(p) {
+    var s = p.code;
+    if (p.tooth) s += " #" + p.tooth;
+    if (p.surfaces) s += " " + p.surfaces;
+    if (p.description) s += " (" + p.description + ")";
+    return s + " " + money(p.feeCents);
+  }
+
+  function render() {
+    var list = filtered();
+    var html = "";
+    if (!list.length) html = '<div id="empty">No claims match.</div>';
+    list.forEach(function(c){
+      var b = billed(c), paid = c.paidAmountCents || 0;
+      html += '<div class="row" data-id="'+c.id+'">' +
+        '<div class="line1"><span class="tag">CLM</span>' +
+        '<span class="name">'+esc(c.patientName)+'</span>' +
+        '<span class="pill '+c.status+'">'+STATUS_LABEL[c.status]+'</span>' +
+        '<span class="total">'+money(b)+'</span></div>' +
+        '<div class="line2">'+ c.procedures.map(procLine).map(esc).join(" · ") +
+        ' · DOS '+fmtDate(c.dateOfService)+' · Sub '+fmtDate(c.dateSubmitted) +
+        (c.referenceNumber ? ' · #'+esc(c.referenceNumber) : '') +
+        (paid ? ' · Paid '+money(paid) : '') + '</div>' +
+        (c.notes ? '<div class="note">'+esc(c.notes)+'</div>' : '') +
+        '<div class="actions"><select data-act="status">' +
+          Object.keys(STATUS_LABEL).map(function(k){
+            return '<option value="'+k+'"'+(c.status===k?' selected':'')+'>'+STATUS_LABEL[k]+'</option>';
+          }).join("") + '</select>' +
+        '<button class="ghost small" data-act="edit">Edit</button>' +
+        '<button class="ghost small" data-act="paid">Mark paid</button>' +
+        '<button class="danger small" data-act="del">Delete</button></div></div>';
+    });
+    $("list").innerHTML = html;
+    var n = claims.length, tb=0, tp=0;
+    claims.forEach(function(c){ if (c.status!=="voided") { tb += billed(c); tp += (c.paidAmountCents||0); } });
+    $("summary").innerHTML = "<span><b>"+n+"</b> claims</span><span>Billed <b>"+money(tb)+
+      "</b></span><span>Paid <b>"+money(tp)+"</b></span><span>Outstanding <b>"+money(tb-tp)+"</b></span>";
+  }
+
+  function markDirty() { dirty = true; $("dirty").style.display = "inline-block"; }
+  window.addEventListener("beforeunload", function(e){ if (dirty) e.preventDefault(); });
+
+  $("list").addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act]"); if (!btn) return;
+    var row = e.target.closest(".row"), id = +row.dataset.id;
+    var c = claims.find(function(x){return x.id===id;}); if (!c) return;
+    var act = btn.dataset.act;
+    if (act === "del") {
+      if (confirm("Delete the claim for "+c.patientName+" ("+money(billed(c))+")?")) {
+        claims = claims.filter(function(x){return x.id!==id;});
+        markDirty(); render();
+      }
+    } else if (act === "edit") { openForm(c); }
+    else if (act === "paid") {
+      var amt = prompt("Amount paid ($):", (billed(c)/100).toFixed(2));
+      if (amt === null) return;
+      var cents = Math.round(parseFloat(amt)*100);
+      if (isNaN(cents) || cents < 0) { alert("Enter a valid amount."); return; }
+      c.paidAmountCents = cents;
+      c.paidDate = new Date().toISOString().slice(0,10);
+      c.status = (cents >= billed(c)) ? "paid" : "partially_paid";
+      markDirty(); render();
+    }
+  });
+  $("list").addEventListener("change", function(e){
+    var sel = e.target.closest('[data-act="status"]'); if (!sel) return;
+    var row = e.target.closest(".row"), id = +row.dataset.id;
+    var c = claims.find(function(x){return x.id===id;}); if (!c) return;
+    c.status = sel.value; markDirty(); render();
+  });
+
+  $("q").addEventListener("input", render);
+  $("fStatus").addEventListener("change", render);
+  $("newBtn").addEventListener("click", function(){ openForm(null); });
+  $("unlockBtn").addEventListener("click", unlock);
+  $("pp").addEventListener("keydown", function(e){ if (e.key==="Enter") unlock(); });
+  $("logoutLink").addEventListener("click", function(e){ e.preventDefault(); PortalAuth.logout(); });
+
+  /* ---- form ---- */
+  function procRowHtml(p) {
+    p = p || {};
+    return '<div class="prow"><input placeholder="Code" value="'+esc(p.code||"")+'" data-k="code">' +
+      '<input placeholder="Tooth" value="'+esc(p.tooth||"")+'" data-k="tooth">' +
+      '<input placeholder="Surf." value="'+esc(p.surfaces||"")+'" data-k="surfaces">' +
+      '<input placeholder="$ fee" type="number" min="0" step="0.01" value="'+(p.feeCents!=null?(p.feeCents/100).toFixed(2):"")+'" data-k="fee">' +
+      '<button class="danger small" data-k="rm" type="button">×</button></div>';
+  }
+  function openForm(c) {
+    editingId = c ? c.id : null;
+    $("formTitle").textContent = c ? "Edit claim" : "New claim";
+    $("f_patientName").value = c ? c.patientName : "";
+    $("f_memberId").value = c ? c.memberId : "";
+    $("f_patientDob").value = c ? (c.patientDob||"") : "";
+    $("f_dateOfService").value = c ? (c.dateOfService||"") : "";
+    $("f_dateSubmitted").value = c ? (c.dateSubmitted||"") : new Date().toISOString().slice(0,10);
+    $("f_referenceNumber").value = c ? (c.referenceNumber||"") : "";
+    $("f_provider").value = c ? (c.provider||"Zhengzheng Sun") : "Zhengzheng Sun";
+    $("f_status").value = c ? c.status : "submitted";
+    $("f_paidAmount").value = c && c.paidAmountCents!=null ? (c.paidAmountCents/100).toFixed(2) : "";
+    $("f_paidDate").value = c ? (c.paidDate||"") : "";
+    $("f_followUpDate").value = c ? (c.followUpDate||"") : "";
+    $("f_notes").value = c ? (c.notes||"") : "";
+    $("procRows").innerHTML = (c ? c.procedures : [{}]).map(procRowHtml).join("");
+    $("overlay").style.display = "block";
+  }
+  $("addProc").addEventListener("click", function(){ $("procRows").insertAdjacentHTML("beforeend", procRowHtml()); });
+  $("procRows").addEventListener("click", function(e){
+    if (e.target.dataset.k === "rm") e.target.closest(".prow").remove();
+  });
+  $("cancelForm").addEventListener("click", function(){ $("overlay").style.display = "none"; });
+  $("saveForm").addEventListener("click", function(){
+    var name = $("f_patientName").value.trim();
+    if (!name) { alert("Patient name is required."); return; }
+    var procs = [];
+    $("procRows").querySelectorAll(".prow").forEach(function(r){
+      var code = r.querySelector('[data-k="code"]').value.trim();
+      if (!code) return;
+      var fee = Math.round(parseFloat(r.querySelector('[data-k="fee"]').value || "0")*100) || 0;
+      procs.push({ code:code, tooth:r.querySelector('[data-k="tooth"]').value.trim(),
+        surfaces:r.querySelector('[data-k="surfaces"]').value.trim(), feeCents:fee, description:"" });
+    });
+    if (!procs.length) { alert("Add at least one procedure."); return; }
+    var paidVal = $("f_paidAmount").value.trim();
+    var rec = {
+      patientName:name, memberId:$("f_memberId").value.trim(),
+      patientDob:$("f_patientDob").value||null, dateOfService:$("f_dateOfService").value||null,
+      dateSubmitted:$("f_dateSubmitted").value||null, referenceNumber:$("f_referenceNumber").value.trim()||null,
+      provider:$("f_provider").value.trim()||null, status:$("f_status").value,
+      procedures:procs,
+      paidAmountCents: paidVal===""?null:Math.round(parseFloat(paidVal)*100),
+      paidDate:$("f_paidDate").value||null, followUpDate:$("f_followUpDate").value||null,
+      notes:$("f_notes").value.trim()||null
+    };
+    if (editingId) {
+      var c = claims.find(function(x){return x.id===editingId;});
+      Object.assign(c, rec);
+    } else {
+      rec.id = claims.reduce(function(m,x){return Math.max(m,x.id);},0)+1;
+      claims.push(rec);
+    }
+    $("overlay").style.display = "none";
+    markDirty(); render();
+  });
+
+  /* ---- save: re-encrypt and download ---- */
+  $("saveBtn").addEventListener("click", async function(){
+    try {
+      var salt = crypto.getRandomValues(new Uint8Array(16));
+      var iv = crypto.getRandomValues(new Uint8Array(12));
+      var key = await deriveKey(passphrase, salt);
+      var pt = new TextEncoder().encode(JSON.stringify({ version:1, claims:claims }));
+      var ct = new Uint8Array(await crypto.subtle.encrypt({ name:"AES-GCM", iv:iv }, key, pt));
+      var env = { v:1, kdf:"PBKDF2-SHA256", iter:ITER,
+        salt:bytesToB64(salt), iv:bytesToB64(iv), data:bytesToB64(ct) };
+      var blob = new Blob([JSON.stringify(env)], { type:"application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "claims-data.enc.json";
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      dirty = false; $("dirty").style.display = "none";
+    } catch (e) { alert("Encryption failed: " + e.message); }
+  });
+})();
+</script>
+</body>
+</html>
