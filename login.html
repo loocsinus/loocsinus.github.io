@@ -48,9 +48,18 @@
                 try {
                     var res = await fetch("users.json", { cache: "no-store" });
                     var data = await res.json();
-                    var ok = (data.users || []).some(function (x) {
-                        return x.username === u && x.password === p;
-                    });
+                    async function sha256hex(s) {
+                        var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+                        return Array.from(new Uint8Array(b)).map(function (x) { return x.toString(16).padStart(2, "0"); }).join("");
+                    }
+                    var ok = false;
+                    for (var x of (data.users || [])) {
+                        if (x.username !== u) continue;
+                        // `password` holds a salted SHA-256 hex hash when `salt` is present (legacy: plaintext)
+                        if (x.salt && x.password) {
+                            if ((await sha256hex(x.salt + p)) === x.password) { ok = true; break; }
+                        } else if (x.password === p) { ok = true; break; }
+                    }
                     if (ok) {
                         sessionStorage.setItem("csd_auth", "1");
                         location.replace(next);
