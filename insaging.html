@@ -124,7 +124,8 @@ function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").rep
 function money2(n){ return "$"+fmt(n); }
 function render(){
   var q = document.getElementById("q").value.trim().toLowerCase();
-  var rows = DATA.filter(function(r){
+  var visible = DATA.filter(function(r){ return !r.deleted; });
+  var rows = visible.filter(function(r){
     return !q || r.patient.toLowerCase().indexOf(q)>=0 || r.insurance.toLowerCase().indexOf(q)>=0 || r.subscriber.toLowerCase().indexOf(q)>=0;
   });
   rows.sort(function(a,b){
@@ -145,16 +146,17 @@ function render(){
       + '<td><button class="delbtn" data-del="'+DATA.indexOf(r)+'">Delete</button></td></tr>';
   }
   document.getElementById("tb").innerHTML = h;
-  document.getElementById("count").textContent = rows.length + " of " + DATA.length + " claims";
+  var ndel = DATA.length - visible.length;
+  document.getElementById("count").textContent = rows.length + " of " + visible.length + " claims" + (ndel ? " (" + ndel + " deleted)" : "");
   var t=0,c=0,b31=0,b61=0,b90=0, j, r0;
-  for (j=0;j<DATA.length;j++){ r0=DATA[j]; t+=r0.total; c+=r0.current; b31+=r0.d31; b61+=r0.d61; b90+=r0.d90; }
+  for (j=0;j<DATA.length;j++){ r0=DATA[j]; if(r0.deleted) continue; t+=r0.total; c+=r0.current; b31+=r0.d31; b61+=r0.d61; b90+=r0.d90; }
   document.getElementById("cTotal").textContent = money2(t);
   document.getElementById("cCur").textContent = money2(c);
   document.getElementById("c31").textContent = money2(b31);
   document.getElementById("c61").textContent = money2(b61);
   document.getElementById("c90").textContent = money2(b90);
   document.getElementById("metaLine").innerHTML = "Report date: 10/17/2026 &nbsp;&middot;&nbsp; "
-    + DATA.length + " claims &nbsp;&middot;&nbsp; "
+    + visible.length + " claims &nbsp;&middot;&nbsp; "
     + '<a href="#" onclick="PortalAuth.logout();return false;">Log out</a>';
 }
 function markDirty(){ dirty = true; document.getElementById("dirtyDot").style.display = "inline-block"; }
@@ -164,7 +166,7 @@ document.getElementById("tb").addEventListener("click", function(e){
   var idx = +b.getAttribute("data-del");
   var r = DATA[idx]; if(!r) return;
   if(confirm("Delete this claim?\n"+r.patient+" — $"+fmt(r.total))){
-    DATA.splice(idx,1); markDirty(); render();
+    r.deleted = true; markDirty(); render();
   }
 });
 window.addEventListener("beforeunload", function(e){ if(dirty) e.preventDefault(); });
