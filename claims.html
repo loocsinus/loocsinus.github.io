@@ -197,6 +197,7 @@
   function filtered() {
     var q = $("q").value.trim().toLowerCase(), st = $("fStatus").value;
     return claims.filter(function(c){
+      if (c.deleted) return false;
       if (st && c.status !== st) return false;
       if (!q) return true;
       var hay = (c.patientName+" "+c.memberId+" "+c.referenceNumber+" "+
@@ -238,9 +239,9 @@
         '<button class="danger small" data-act="del">Delete</button></div></div>';
     });
     $("list").innerHTML = html;
-    var n = claims.length, tb=0, tp=0;
-    claims.forEach(function(c){ if (c.status!=="voided") { tb += billed(c); tp += (c.paidAmountCents||0); } });
-    $("summary").innerHTML = "<span><b>"+n+"</b> claims</span><span>Billed <b>"+money(tb)+
+    var n = 0, ndel = 0, tb=0, tp=0;
+    claims.forEach(function(c){ if (c.deleted) { ndel++; return; } n++; if (c.status!=="voided") { tb += billed(c); tp += (c.paidAmountCents||0); } });
+    $("summary").innerHTML = "<span><b>"+n+"</b> claims"+(ndel?" ("+ndel+" deleted)":"")+"</span><span>Billed <b>"+money(tb)+
       "</b></span><span>Paid <b>"+money(tp)+"</b></span><span>Outstanding <b>"+money(tb-tp)+"</b></span>";
   }
 
@@ -254,7 +255,7 @@
     var act = btn.dataset.act;
     if (act === "del") {
       if (confirm("Delete the claim for "+c.patientName+" ("+money(billed(c))+")?")) {
-        claims = claims.filter(function(x){return x.id!==id;});
+        c.deleted = true;
         markDirty(); render();
       }
     } else if (act === "edit") { openForm(c); }
