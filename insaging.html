@@ -30,6 +30,10 @@
   tbody tr:hover td { background:#f3ecea; }
   td.d90 { color:#b00020; font-weight:700; }
   .pstar { color:#b26a00; font-weight:700; }
+  .delbtn { background:#fff; color:#b00020; border:1px solid #e0a3ad; border-radius:4px; padding:.25rem .5rem; font-size:.75rem; cursor:pointer; white-space:nowrap; }
+  .delbtn:hover { background:#b00020; color:#fff; }
+  #saveBtn { background:#fff; color:rgb(126,59,53); border:none; border-radius:4px; padding:.55rem .9rem; font-size:.85rem; cursor:pointer; font-weight:600; }
+  #dirtyDot { display:none; background:#ffcf40; color:#4a2c28; font-size:.75rem; border-radius:4px; padding:.3rem .6rem; margin-left:.5rem; font-weight:600; }
   footer { padding:0 1.25rem 2rem; font-size:.78rem; color:#777; }
   @media (max-width:700px){ .toolbar input{ width:100%; } }
 </style>
@@ -50,15 +54,16 @@
 <header>
   <div>
     <h1>Insurance Claim Aging &mdash; Creating Smiles Dentistry</h1>
-    <div class="meta">Report date: 10/17/2026 &nbsp;&middot;&nbsp; 547 claims &nbsp;&middot;&nbsp; <a href="#" onclick="PortalAuth.logout();return false;">Log out</a></div>
+    <div class="meta" id="metaLine">Report date: 10/17/2026 &nbsp;&middot;&nbsp; <a href="#" onclick="PortalAuth.logout();return false;">Log out</a></div>
   </div>
+  <div><button id="saveBtn" hidden>Save &amp; download</button><span id="dirtyDot">Unsaved changes</span></div>
 </header>
 <div class="cards">
-  <div class="card"><div class="lbl">Total outstanding</div><div class="val">$177,232.00</div></div>
-  <div class="card"><div class="lbl">Current</div><div class="val">$90,646.00</div></div>
-  <div class="card"><div class="lbl">31&ndash;60 days</div><div class="val">$44,485.00</div></div>
-  <div class="card"><div class="lbl">61&ndash;90 days</div><div class="val">$20,455.00</div></div>
-  <div class="card hot"><div class="lbl">Over 90 days</div><div class="val">$21,646.00</div></div>
+  <div class="card"><div class="lbl">Total outstanding</div><div class="val" id="cTotal"></div></div>
+  <div class="card"><div class="lbl">Current</div><div class="val" id="cCur"></div></div>
+  <div class="card"><div class="lbl">31&ndash;60 days</div><div class="val" id="c31"></div></div>
+  <div class="card"><div class="lbl">61&ndash;90 days</div><div class="val" id="c61"></div></div>
+  <div class="card hot"><div class="lbl">Over 90 days</div><div class="val" id="c90"></div></div>
 </div>
 <div class="toolbar">
   <input id="q" type="search" placeholder="Search patient, insurance, or subscriber&hellip;" autocomplete="off">
@@ -72,20 +77,22 @@
     <th data-k="sent">Sent</th><th data-k="service">Service</th>
     <th data-k="estimate" class="num">Estimate</th><th data-k="current" class="num">Current</th>
     <th data-k="d31" class="num">31&ndash;60</th><th data-k="d61" class="num">61&ndash;90</th>
-    <th data-k="d90" class="num">&gt;90</th><th data-k="total" class="num">Total</th>
+    <th data-k="d90" class="num">&gt;90</th><th data-k="total" class="num">Total</th><th></th>
   </tr></thead>
   <tbody id="tb"></tbody>
 </table>
 </div>
-<footer>Partially-paid claims are marked with *. Birthdays and member ID numbers are intentionally omitted from this page. Data extracted from the Dentrix aging report dated 10/17/2026.</footer>
+<footer>Partially-paid claims are marked with *. Birthdays and member ID numbers are intentionally omitted from this page. Data extracted from the Dentrix aging report dated 10/17/2026. Use Delete to remove claims you have finished processing, then Save &amp; download and send the new data file to John to publish it.</footer>
 <script>
 var DATA = null;
 var ITER = 600000;
+var passphrase = "", dirty = false;
 function b64ToBytes(s){ var b=atob(s),n=b.length,a=new Uint8Array(n); for(var i=0;i<n;i++) a[i]=b.charCodeAt(i); return a; }
+function bytesToB64(a){ var s=""; for(var i=0;i<a.length;i++) s+=String.fromCharCode(a[i]); return btoa(s); }
 async function deriveKey(pp, salt){
   var base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pp), "PBKDF2", false, ["deriveKey"]);
   return crypto.subtle.deriveKey({name:"PBKDF2", salt:salt, iterations:ITER, hash:"SHA-256"},
-    base, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+    base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]);
 }
 async function unlock(){
   var err = document.getElementById("lockError"); err.textContent = "";
@@ -100,9 +107,11 @@ async function unlock(){
     var pt = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64ToBytes(env.iv)}, key, raw);
     var data = JSON.parse(new TextDecoder().decode(pt));
     DATA = data.claims;
+    passphrase = pp;
     document.getElementById("pp").value = "";
     document.getElementById("lock").hidden = true;
     document.getElementById("app").hidden = false;
+    document.getElementById("saveBtn").hidden = false;
     render();
   }catch(e){ err.textContent = "Wrong passphrase, or the data file is missing/corrupt."; }
 }
@@ -112,6 +121,7 @@ var sortK = "d90", sortDir = -1;
 var NUMKEYS = {estimate:1,current:1,d31:1,d61:1,d90:1,total:1};
 function fmt(n){ return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function money2(n){ return "$"+fmt(n); }
 function render(){
   var q = document.getElementById("q").value.trim().toLowerCase();
   var rows = DATA.filter(function(r){
@@ -131,11 +141,49 @@ function render(){
       + "<td>"+esc(r.subscriber)+"</td><td>"+r.sent+"</td><td>"+r.service+"</td>"
       + '<td class="num">'+fmt(r.estimate)+'</td><td class="num">'+fmt(r.current)+"</td>"
       + '<td class="num">'+fmt(r.d31)+'</td><td class="num">'+fmt(r.d61)+'</td>'
-      + '<td class="num d90">'+fmt(r.d90)+'</td><td class="num"><b>'+fmt(r.total)+"</b></td></tr>";
+      + '<td class="num d90">'+fmt(r.d90)+'</td><td class="num"><b>'+fmt(r.total)+"</b></td>"
+      + '<td><button class="delbtn" data-del="'+DATA.indexOf(r)+'">Delete</button></td></tr>';
   }
   document.getElementById("tb").innerHTML = h;
   document.getElementById("count").textContent = rows.length + " of " + DATA.length + " claims";
+  var t=0,c=0,b31=0,b61=0,b90=0, j, r0;
+  for (j=0;j<DATA.length;j++){ r0=DATA[j]; t+=r0.total; c+=r0.current; b31+=r0.d31; b61+=r0.d61; b90+=r0.d90; }
+  document.getElementById("cTotal").textContent = money2(t);
+  document.getElementById("cCur").textContent = money2(c);
+  document.getElementById("c31").textContent = money2(b31);
+  document.getElementById("c61").textContent = money2(b61);
+  document.getElementById("c90").textContent = money2(b90);
+  document.getElementById("metaLine").innerHTML = "Report date: 10/17/2026 &nbsp;&middot;&nbsp; "
+    + DATA.length + " claims &nbsp;&middot;&nbsp; "
+    + '<a href="#" onclick="PortalAuth.logout();return false;">Log out</a>';
 }
+function markDirty(){ dirty = true; document.getElementById("dirtyDot").style.display = "inline-block"; }
+document.getElementById("tb").addEventListener("click", function(e){
+  var b = e.target.closest ? e.target.closest("[data-del]") : null;
+  if(!b) return;
+  var idx = +b.getAttribute("data-del");
+  var r = DATA[idx]; if(!r) return;
+  if(confirm("Delete this claim?\n"+r.patient+" — $"+fmt(r.total))){
+    DATA.splice(idx,1); markDirty(); render();
+  }
+});
+window.addEventListener("beforeunload", function(e){ if(dirty) e.preventDefault(); });
+document.getElementById("saveBtn").addEventListener("click", async function(){
+  try{
+    var salt = crypto.getRandomValues(new Uint8Array(16));
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var key = await deriveKey(passphrase, salt);
+    var pt = new TextEncoder().encode(JSON.stringify({version:1, claims:DATA}));
+    var ct = new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM", iv:iv}, key, pt));
+    var env = {v:1, kdf:"PBKDF2-SHA256", iter:ITER, salt:bytesToB64(salt), iv:bytesToB64(iv), data:bytesToB64(ct)};
+    var blob = new Blob([JSON.stringify(env)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "insaging-data.enc.json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    dirty = false; document.getElementById("dirtyDot").style.display = "none";
+  }catch(err){ alert("Encryption failed: "+err.message); }
+});
 document.querySelectorAll("thead th").forEach(function(th){
   th.addEventListener("click", function(){
     var k = th.getAttribute("data-k");
