@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Profit and Loss Format — May 2026 Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Franklin:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f5f3;
+    --surface:#ffffff;
+    --surface-2:#eef1ee;
+    --surface-3:#e6eae6;
+    --ink:#17201d;
+    --ink-2:#4a5751;
+    --ink-3:#7a8680;
+    --line:#dde2dd;
+    --line-strong:#c8d0c8;
+    --teal:#0f5e52;
+    --teal-dark:#0a453c;
+    --teal-tint:#e6f0ec;
+    --gold:#b07d2e;
+    --gold-tint:#fdf3df;
+    --red:#b42318;
+    --green:#137547;
+    --radius:14px;
+    --radius-sm:8px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#101613;
+      --surface:#1a211e;
+      --surface-2:#222b27;
+      --surface-3:#2a352f;
+      --ink:#eef2ef;
+      --ink-2:#b8c4bd;
+      --ink-3:#8a9a90;
+      --line:#2e3a34;
+      --line-strong:#3d4d44;
+      --teal:#3db89f;
+      --teal-dark:#7fd1bd;
+      --teal-tint:#1e332c;
+      --gold:#e0aa4a;
+      --gold-tint:#332a18;
+      --green:#4ade9e;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Libre Franklin",system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--teal);text-decoration-color:color-mix(in srgb,var(--teal) 40%,transparent);text-underline-offset:3px}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 20px 56px}
+  /* header */
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--teal);margin:0 0 6px}
+  h1{font-family:"Newsreader",Georgia,serif;font-size:clamp(30px,5vw,44px);line-height:1.05;font-weight:600;letter-spacing:-.02em;margin:0}
+  h1 em{font-style:normal;color:var(--teal)}
+  .sub{color:var(--ink-2);font-size:15px;margin:8px 0 0;max-width:620px}
+  .meta-pill{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .pill{font-size:12.5px;font-weight:600;background:var(--surface);border:1px solid var(--line);padding:7px 11px;border-radius:999px;color:var(--ink-2)}
+  .pill strong{color:var(--ink)}
+  .badge-proposal{background:var(--teal);color:#fff;border-color:var(--teal);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+  @media(prefers-color-scheme:dark){.badge-proposal{color:#0b1512}}
+
+  /* KPIs */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+  @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;position:relative;overflow:hidden}
+  .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal)}
+  .kpi.gold::before{background:var(--gold)}
+  .kpi.plain::before{background:var(--line-strong)}
+  .kpi-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink-3);margin:0}
+  .kpi-value{font-family:"IBM Plex Mono",monospace;font-size:clamp(22px,3vw,28px);font-weight:600;letter-spacing:-.03em;margin:6px 0 2px;line-height:1}
+  .kpi-note{font-size:13px;color:var(--ink-2);margin:0}
+  .kpi-note strong{color:var(--ink)}
+
+  /* layout */
+  .layout{display:grid;grid-template-columns:1.85fr .95fr;gap:16px;align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .card-head{padding:18px 20px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .card-head h2{font-size:16px;font-weight:700;margin:0;letter-spacing:-.01em}
+  .card-head p{margin:3px 0 0;color:var(--ink-2);font-size:13.5px}
+  .toggle{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .toggle button{border:0;background:transparent;padding:7px 12px;border-radius:999px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+  .toggle button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+  /* statement rows */
+  .stmt{padding:6px 0 10px}
+  .section-label{padding:14px 20px 6px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:800;color:var(--teal);display:flex;justify-content:space-between}
+  .section-label span:last-child{color:var(--ink-3);letter-spacing:0;text-transform:none;font-weight:600}
+  .row{display:grid;grid-template-columns:1fr 110px 72px 88px;gap:12px;align-items:center;padding:8px 20px;font-size:14.5px}
+  @media(max-width:560px){.row{grid-template-columns:1fr 92px 58px}.row .barcell{display:none}}
+  .row.sub{padding-left:36px;color:var(--ink-2);font-size:14px}
+  .row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;font-weight:700}
+  .row.grand{border-top:2px solid var(--ink);margin-top:8px;padding-top:13px;padding-bottom:13px;font-weight:800;font-size:15.5px;background:var(--surface-2)}
+  .row.grand .amt{font-size:16px}
+  .row.income-total{background:var(--teal-tint)}
+  .amt{font-family:"IBM Plex Mono",monospace;text-align:right;font-weight:500;letter-spacing:-.02em;white-space:nowrap}
+  .pct{font-family:"IBM Plex Mono",monospace;text-align:right;color:var(--ink-2);font-size:13.5px;white-space:nowrap}
+  .colhead{display:grid;grid-template-columns:1fr 110px 72px 88px;gap:12px;padding:8px 20px 2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+  @media(max-width:560px){.colhead{grid-template-columns:1fr 92px 58px}.colhead span:last-child{display:none}}
+  .colhead span:nth-child(2),.colhead span:nth-child(3){text-align:right}
+  .barcell{height:6px;background:var(--surface-3);border-radius:999px;overflow:hidden}
+  .bar{height:100%;background:var(--teal);border-radius:999px;opacity:.85}
+  .bar.gold{background:var(--gold)} .bar.muted{background:var(--ink-3);opacity:.55}
+
+  /* side cards */
+  .side-stack{display:grid;gap:16px}
+  .side{padding:18px 20px}
+  .side h3{margin:0 0 8px;font-size:14px;font-weight:700;letter-spacing:-.01em}
+  .side p,.side li{font-size:14px;color:var(--ink-2)}
+  .side p{margin:0 0 10px}
+  .side ul{margin:0;padding-left:18px}
+  .side li{margin:6px 0}
+  .side li strong{color:var(--ink)}
+  .callout{background:var(--gold-tint);border:1px solid color-mix(in srgb,var(--gold) 28%,var(--line));border-radius:var(--radius);padding:18px 20px}
+  .callout h3{color:var(--ink)}
+  .mini-bars{display:grid;gap:10px;margin-top:12px}
+  .mini{display:grid;grid-template-columns:118px 1fr 52px;gap:10px;align-items:center;font-size:13px}
+  .mini b{font-family:"IBM Plex Mono",monospace;text-align:right;font-weight:600}
+  .mini-track{height:8px;background:var(--surface-3);border-radius:999px;overflow:hidden}
+  .mini-fill{height:100%;background:var(--teal);border-radius:999px}
+  .legend{font-size:12.5px;color:var(--ink-3);margin-top:10px}
+
+  /* grouped view */
+  .grouped{display:none}
+  .grouped.active{display:block}
+  .detailed.hidden{display:none}
+  .group-row{padding:14px 20px;border-top:1px solid var(--line)}
+  .group-row:first-child{border-top:0}
+  .group-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+  .group-top h4{margin:0;font-size:15px}
+  .group-top .amt{font-size:15px;font-weight:600}
+  .group-desc{color:var(--ink-2);font-size:13.5px;margin:4px 0 8px}
+
+  /* format notes */
+  .changes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  @media(max-width:820px){.changes{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.changes{grid-template-columns:1fr}}
+  .change{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .change-num{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:700;color:var(--teal);letter-spacing:.08em}
+  .change h3{margin:6px 0 6px;font-size:14.5px}
+  .change p{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.55}
+
+  .compare{margin-top:16px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  @media(max-width:640px){.compare-grid{grid-template-columns:1fr}}
+  .compare-col{padding:18px 20px}
+  .compare-col + .compare-col{border-left:1px solid var(--line)}
+  @media(max-width:640px){.compare-col + .compare-col{border-left:0;border-top:1px solid var(--line)}}
+  .compare-col h3{margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+  .compare-col ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px}
+  .compare-col li{margin:5px 0}
+
+  footer{margin-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--ink-3);font-size:12.5px;line-height:1.6}
+  footer a{font-weight:600}
+  .print-note{max-width:520px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topbar">
+    <div>
+      <p class="eyebrow">Zhengzheng Sun Dental Corp · Creating Smiles Dentistry</p>
+      <h1>Profit &amp; Loss — <em>May 2026</em></h1>
+      <p class="sub">A cleaner monthly format built on QuickBooks’ standard P&amp;L. Same accounts and totals — reorganised so you can see margin, payroll weight, and clinical costs in under two minutes.</p>
+      <div class="meta-pill">
+        <span class="pill"><strong>Period</strong> &nbsp;May 1–31, 2026</span>
+        <span class="pill"><strong>Basis</strong> &nbsp;QuickBooks P&amp;L</span>
+        <span class="pill"><strong>Income</strong> &nbsp;Patient Fee only</span>
+      </div>
+    </div>
+    <span class="badge-proposal">FORMAT PROPOSAL — TEST</span>
+  </div>
+
+  <!-- KPI strip: the addition QuickBooks doesn't give you at a glance -->
+  <section class="kpis" aria-label="May 2026 summary">
+    <article class="kpi">
+      <p class="kpi-label">Total income</p>
+      <p class="kpi-value">$41,605.56</p>
+      <p class="kpi-note">All from <strong>Patient Fee</strong></p>
+    </article>
+    <article class="kpi plain">
+      <p class="kpi-label">Gross profit</p>
+      <p class="kpi-value">$41,605.56</p>
+      <p class="kpi-note"><strong>100.0%</strong> margin · $0 COGS in QB</p>
+    </article>
+    <article class="kpi gold">
+      <p class="kpi-label">Total expenses</p>
+      <p class="kpi-value">$27,487.66</p>
+      <p class="kpi-note"><strong>66.1%</strong> of income</p>
+    </article>
+    <article class="kpi">
+      <p class="kpi-label">Net income</p>
+      <p class="kpi-value">$14,117.90</p>
+      <p class="kpi-note"><strong>33.9%</strong> net margin</p>
+    </article>
+  </section>
+
+  <div class="layout">
+    <!-- Main statement -->
+    <section class="card" aria-label="Profit and loss statement">
+      <div class="card-head">
+        <div>
+          <h2>Statement — proposed format</h2>
+          <p>Detailed view keeps every QuickBooks line. Grouped view rolls it up the way you’d review it monthly.</p>
+        </div>
+        <div class="toggle" role="group" aria-label="Statement view">
+          <button id="btnDetailed" aria-pressed="true" type="button">Detailed</button>
+          <button id="btnGrouped" aria-pressed="false" type="button">Grouped</button>
+        </div>
+      </div>
+
+      <!-- DETAILED -->
+      <div id="viewDetailed" class="detailed">
+        <div class="colhead"><span>Account</span><span>Amount</span><span>% of income</span><span>Share</span></div>
+        <div class="stmt">
+          <div class="section-label"><span>Income</span><span></span></div>
+          <div class="row"><span>Patient Fee</span><span class="amt">41,605.56</span><span class="pct">100.0%</span><span class="barcell"><span class="bar" style="display:block;width:100%"></span></span></div>
+          <div class="row total income-total"><span>Total Income</span><span class="amt">$41,605.56</span><span class="pct">100.0%</span><span></span></div>
+
+          <div class="section-label"><span>Gross Profit</span><span>No COGS recorded</span></div>
+          <div class="row total"><span>Gross Profit</span><span class="amt">$41,605.56</span><span class="pct">100.0%</span><span></span></div>
+
+          <div class="section-label"><span>Operating Expenses</span><span>$27,487.66 total</span></div>
+
+          <div class="row"><span>Payroll Expenses</span><span class="amt"></span><span class="pct"></span><span></span></div>
+          <div class="row sub"><span>Wages</span><span class="amt">16,491.33</span><span class="pct">39.6%</span><span class="barcell"><span class="bar" style="display:block;width:92%"></span></span></div>
+          <div class="row sub"><span>Taxes</span><span class="amt">1,277.54</span><span class="pct">3.1%</span><span class="barcell"><span class="bar muted" style="display:block;width:7%"></span></span></div>
+          <div class="row sub total" style="border-top:1px dashed var(--line)"><span>Total — Payroll Expenses</span><span class="amt">17,768.87</span><span class="pct">42.7%</span><span></span></div>
+
+          <div class="row"><span>Lab Fee</span><span class="amt">2,609.56</span><span class="pct">6.3%</span><span class="barcell"><span class="bar gold" style="display:block;width:15%"></span></span></div>
+          <div class="row"><span>Dental Supplies</span><span class="amt">1,467.53</span><span class="pct">3.5%</span><span class="barcell"><span class="bar gold" style="display:block;width:8%"></span></span></div>
+          <div class="row"><span>Other Business Expenses</span><span class="amt">838.52</span><span class="pct">2.0%</span><span class="barcell"><span class="bar muted" style="display:block;width:5%"></span></span></div>
+          <div class="row"><span>Software Maintenance</span><span class="amt">685.63</span><span class="pct">1.6%</span><span class="barcell"><span class="bar muted" style="display:block;width:4%"></span></span></div>
+          <div class="row"><span>Meals &amp; Entertainment</span><span class="amt">587.59</span><span class="pct">1.4%</span><span class="barcell"><span class="bar muted" style="display:block;width:3%"></span></span></div>
+          <div class="row"><span>Telephone</span><span class="amt">576.70</span><span class="pct">1.4%</span><span class="barcell"><span class="bar muted" style="display:block;width:3%"></span></span></div>
+          <div class="row"><span>Insurance</span><span class="amt">560.57</span><span class="pct">1.3%</span><span class="barcell"><span class="bar muted" style="display:block;width:3%"></span></span></div>
+          <div class="row"><span>Utilities</span><span class="amt">541.15</span><span class="pct">1.3%</span><span class="barcell"><span class="bar muted" style="display:block;width:3%"></span></span></div>
+          <div class="row"><span>Office / General Administrative</span><span class="amt">460.00</span><span class="pct">1.1%</span><span class="barcell"><span class="bar muted" style="display:block;width:3%"></span></span></div>
+          <div class="row"><span>Bank Charges &amp; Fees</span><span class="amt">408.08</span><span class="pct">1.0%</span><span class="barcell"><span class="bar muted" style="display:block;width:2%"></span></span></div>
+          <div class="row"><span>Travel</span><span class="amt">239.09</span><span class="pct">0.6%</span><span class="barcell"><span class="bar muted" style="display:block;width:2%"></span></span></div>
+          <div class="row"><span>Repairs &amp; Maintenance</span><span class="amt">232.50</span><span class="pct">0.6%</span><span class="barcell"><span class="bar muted" style="display:block;width:2%"></span></span></div>
+          <div class="row"><span>Security</span><span class="amt">228.72</span><span class="pct">0.5%</span><span class="barcell"><span class="bar muted" style="display:block;width:2%"></span></span></div>
+          <div class="row"><span>Dues &amp; Subscriptions</span><span class="amt">150.00</span><span class="pct">0.4%</span><span class="barcell"><span class="bar muted" style="display:block;width:1%"></span></span></div>
+          <div class="row"><span>Employee Benefits</span><span class="amt">133.15</span><span class="pct">0.3%</span><span class="barcell"><span class="bar muted" style="display:block;width:1%"></span></span></div>
+
+          <div class="row total"><span>Total Expenses</span><span class="amt">$27,487.66</span><span class="pct">66.1%</span><span></span></div>
+          <div class="row total"><span>Net Operating Income</span><span class="amt">$14,117.90</span><span class="pct">33.9%</span><span></span></div>
+          <div class="row grand"><span>Net Income — May 2026</span><span class="amt">$14,117.90</span><span class="pct">33.9%</span><span></span></div>
+        </div>
+      </div>
+
+      <!-- GROUPED -->
+      <div id="viewGrouped" class="grouped" aria-label="Grouped management view">
+        <div class="group-row">
+          <div class="group-top"><h4>People</h4><span class="amt">$17,902.02 · 43.0%</span></div>
+          <p class="group-desc">Payroll Expenses $17,768.87 + Employee Benefits $133.15. Your largest cost by far — the number to watch first each month.</p>
+          <div class="barcell" style="height:8px"><span class="bar" style="display:block;width:100%"></span></div>
+        </div>
+        <div class="group-row">
+          <div class="group-top"><h4>Clinical</h4><span class="amt">$4,077.09 · 9.8%</span></div>
+          <p class="group-desc">Lab Fee $2,609.56 + Dental Supplies $1,467.53. Tied directly to production — useful to track as a ratio to Patient Fee.</p>
+          <div class="barcell" style="height:8px"><span class="bar gold" style="display:block;width:23%"></span></div>
+        </div>
+        <div class="group-row">
+          <div class="group-top"><h4>Facility &amp; Operations</h4><span class="amt">$2,139.64 · 5.1%</span></div>
+          <p class="group-desc">Insurance $560.57 · Utilities $541.15 · Telephone $576.70 · Repairs $232.50 · Security $228.72.</p>
+          <div class="barcell" style="height:8px"><span class="bar muted" style="display:block;width:12%"></span></div>
+        </div>
+        <div class="group-row">
+          <div class="group-top"><h4>Admin &amp; Technology</h4><span class="amt">$1,703.71 · 4.1%</span></div>
+          <p class="group-desc">Software Maintenance $685.63 · Office/Admin $460.00 · Bank Charges $408.08 · Dues $150.00.</p>
+          <div class="barcell" style="height:8px"><span class="bar muted" style="display:block;width:10%"></span></div>
+        </div>
+        <div class="group-row">
+          <div class="group-top"><h4>Other</h4><span class="amt">$1,665.20 · 4.0%</span></div>
+          <p class="group-desc">Other Business Expenses $838.52 · Meals &amp; Entertainment $587.59 · Travel $239.09.</p>
+          <div class="barcell" style="height:8px"><span class="bar muted" style="display:block;width:9%"></span></div>
+        </div>
+        <div class="row grand" style="margin:0"><span>Net Income</span><span class="amt">$14,117.90</span><span class="pct">33.9%</span><span></span></div>
+      </div>
+    </section>
+
+    <!-- Side column -->
+    <div class="side-stack">
+      <section class="card side">
+        <h3>What May tells you</h3>
+        <ul>
+          <li><strong>Payroll dominates:</strong> $17,768.87 is 42.7% of income — 64.6% of all expenses. Any month payroll % rises, net will feel it first.</li>
+          <li><strong>Clinical is lean:</strong> Lab + Supplies together are $4,077.09 (9.8% of income). Lab alone is $2,609.56.</li>
+          <li><strong>Everything else is small:</strong> No other single line exceeds about 2.0% of income — the largest, Other Business Expenses, is 2.0%. The long tail totals $5,641.70 across 13 lines.</li>
+          <li><strong>Clean month:</strong> No COGS, no Other Income / Other Expenses — Net Operating Income = Net Income at $14,117.90.</li>
+        </ul>
+      </section>
+
+      <section class="callout">
+        <h3>Where the money went</h3>
+        <p style="margin:0;color:var(--ink-2);font-size:13.5px">Share of total expenses ($27,487.66)</p>
+        <div class="mini-bars">
+          <div class="mini"><span>Payroll</span><span class="mini-track"><span class="mini-fill" style="display:block;width:65%"></span></span><b>64.6%</b></div>
+          <div class="mini"><span>Lab Fee</span><span class="mini-track"><span class="mini-fill" style="display:block;width:15%;background:var(--gold)"></span></span><b>9.5%</b></div>
+          <div class="mini"><span>Dental Supplies</span><span class="mini-track"><span class="mini-fill" style="display:block;width:8%;background:var(--gold)"></span></span><b>5.3%</b></div>
+          <div class="mini"><span>All other</span><span class="mini-track"><span class="mini-fill" style="display:block;width:21%;background:var(--ink-3);opacity:.6"></span></span><b>20.6%</b></div>
+        </div>
+        <p class="legend">In the QuickBooks default this concentration is invisible — you have to add it up yourself. Here it’s the first thing you see.</p>
+      </section>
+
+      <section class="card side">
+        <h3>How to use this each month</h3>
+        <ol style="margin:0;padding-left:18px;color:var(--ink-2);font-size:14px">
+          <li style="margin:5px 0"><strong style="color:var(--ink)">Check the top strip</strong> — income, expenses, net margin.</li>
+          <li style="margin:5px 0"><strong style="color:var(--ink)">Scan % of income</strong> — flag any line that jumps vs. last month.</li>
+          <li style="margin:5px 0"><strong style="color:var(--ink)">Switch to Grouped</strong> for the 30-second review with staff.</li>
+          <li style="margin:5px 0"><strong style="color:var(--ink)">Stay in Detailed</strong> when you need the audit trail back to QuickBooks.</li>
+        </ol>
+      </section>
+    </div>
+  </div>
+
+  <!-- What changed -->
+  <h2 style="font-size:18px;margin:28px 0 4px;letter-spacing:-.01em">What this format changes — and what it keeps</h2>
+  <p style="color:var(--ink-2);margin:0;font-size:14.5px;max-width:700px">Kept from QuickBooks: every account name, order inside Payroll, and all totals exactly as reported. Changed: only presentation, so the statement is faster to read month to month.</p>
+
+  <div class="changes">
+    <article class="change"><span class="change-num">01 — AT A GLANCE</span><h3>KPI header</h3><p>Income, gross profit, expenses, and net with margins up top. QuickBooks buries net at the bottom; here you know the month before you scroll.</p></article>
+    <article class="change"><span class="change-num">02 — CONTEXT</span><h3>% of income on every line</h3><p>$2,609.56 for Lab means more as “6.3% of income.” Percentages make months of different sizes directly comparable.</p></article>
+    <article class="change"><span class="change-num">03 — PRIORITY</span><h3>Expenses sorted by size</h3><p>QuickBooks sorts alphabetically. This sorts largest-first (Payroll → Lab → Supplies…) so attention goes where the dollars are.</p></article>
+    <article class="change"><span class="change-num">04 — SECOND VIEW</span><h3>Grouped management roll-up</h3><p>People / Clinical / Facility / Admin / Other — five buckets for a quick review, with the detailed QuickBooks lines one tap away.</p></article>
+    <article class="change"><span class="change-num">05 — VISUAL WEIGHT</span><h3>Share bars</h3><p>A thin bar next to each line shows relative size instantly, without turning the statement into a chart.</p></article>
+    <article class="change"><span class="change-num">06 — READABILITY</span><h3>Tabular numbers, clear totals</h3><p>Mono numbers align on the decimal, subtotals are tinted, and Net Income gets a double-weight rule — printable and phone-friendly.</p></article>
+  </div>
+
+  <section class="card compare">
+    <div class="compare-grid">
+      <div class="compare-col">
+        <h3>QuickBooks default</h3>
+        <ul>
+          <li>Alphabetical expense list</li>
+          <li>Amount only — no % of income</li>
+          <li>No summary header or margins up top</li>
+          <li>Payroll subtotal inline, easy to miss</li>
+          <li>Best for: filing, accountant handoff</li>
+        </ul>
+      </div>
+      <div class="compare-col">
+        <h3>This proposal</h3>
+        <ul>
+          <li>Same data, sorted by dollar impact</li>
+          <li>Amount + % of income + share bar</li>
+          <li>KPI strip + grouped roll-up included</li>
+          <li>Same account names — maps 1:1 back to QB</li>
+          <li>Best for: your monthly 5-minute review</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      Source: QuickBooks Profit &amp; Loss — Zhengzheng Sun Dental Corp, May 1–31, 2026.<br>
+      <a href="https://qbo.intuit.com/app/report/builder?rptId=8d9c3d69-1e9f-41a3-9885-0a7aa8b154a3&amp;type=temp&amp;cid=meta-QBApp&amp;3p_provider=Meta_QB_MCP" target="_blank" rel="noopener">View in QuickBooks ↗</a>
+      &nbsp;·&nbsp; All amounts as reported in QuickBooks; percentages are amount ÷ total income.
+    </div>
+    <div class="print-note">Test build with May 2026 actuals. If you like the format, the same layout can run for June, July, and August — and side-by-side once you want month-over-month.</div>
+  </footer>
+</main>
+<script>
+  (function(){
+    var btnD=document.getElementById('btnDetailed');
+    var btnG=document.getElementById('btnGrouped');
+    var viewD=document.getElementById('viewDetailed');
+    var viewG=document.getElementById('viewGrouped');
+    function show(grouped){
+      btnD.setAttribute('aria-pressed', grouped?'false':'true');
+      btnG.setAttribute('aria-pressed', grouped?'true':'false');
+      if(grouped){ viewD.classList.add('hidden'); viewG.classList.add('active'); }
+      else{ viewD.classList.remove('hidden'); viewG.classList.remove('active'); }
+    }
+    btnD.addEventListener('click',function(){show(false)});
+    btnG.addEventListener('click',function(){show(true)});
+  })();
+</script>
+</body>
+</html>
