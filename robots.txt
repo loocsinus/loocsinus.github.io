@@ -1,0 +1,30 @@
+# Creating Smiles Dentistry — https://creatingsmilesdentistry.com
+# Allow OpenAI's search crawler so the practice can appear in ChatGPT search answers.
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /claims.html
+Disallow: /insaging.html
+Disallow: /login.html
+Disallow: /hello.html
+Disallow: /pl-2026-05.html
+Disallow: /claims-data.enc.json
+Disallow: /insaging-data.enc.json
+Disallow: /users.json
+
+# ChatGPT-User fetches a page when a person asks ChatGPT about it.
+User-agent: ChatGPT-User
+Allow: /
+
+# All other crawlers: the public site is open; staff/internal pages stay out.
+User-agent: *
+Allow: /
+Disallow: /claims.html
+Disallow: /insaging.html
+Disallow: /login.html
+Disallow: /hello.html
+Disallow: /pl-2026-05.html
+Disallow: /claims-data.enc.json
+Disallow: /insaging-data.enc.json
+Disallow: /users.json
+
+Sitemap: https://creatingsmilesdentistry.com/sitemap.xml
